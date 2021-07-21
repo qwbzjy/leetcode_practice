@@ -1,5 +1,7 @@
 package com.category.tree;
 
+import java.util.*;
+
 /**
  * @Author qiwenbo
  * @Date 2021/7/20 11:13
@@ -204,6 +206,106 @@ public class TreeDemo {
     }
 
     /**
+     * 非递归 前序遍历二叉树
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> preOrderTraversal(Node root) {
+        List<Integer> resList = new ArrayList<>();
+        Stack<Node> treeStack = new Stack<>();
+        if (root == null) {
+            return resList;
+        }
+        treeStack.push(root);
+        while (!treeStack.isEmpty()) {
+            Node tmpNode = treeStack.pop();
+            if (tmpNode != null) {
+                resList.add(tmpNode.val);
+                treeStack.push(tmpNode.right);
+                treeStack.push(tmpNode.left);
+            }
+        }
+        return resList;
+    }
+
+    /**
+     * 非递归中序遍历
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> intervalOrder(Node root) {
+        List<Integer> visitedList = new ArrayList<>();
+        Map<Node, Integer> visitedNodeMap = new HashMap<>();
+        Stack<Node> toBeVisitedNode = new Stack<>();
+        if (root == null) {
+            return visitedList;
+        }
+        toBeVisitedNode.push(root);
+        while (!toBeVisitedNode.isEmpty()) {
+            Node tmp = toBeVisitedNode.peek();
+            while (tmp.left != null) {
+                if (visitedNodeMap.get(tmp.left) != null) {
+                    break;
+                }
+                toBeVisitedNode.push(tmp.left);
+                tmp = tmp.left;
+            }
+            tmp = toBeVisitedNode.pop();
+            visitedList.add(tmp.val);
+            visitedNodeMap.put(tmp, 1);
+            if (tmp.right != null) {
+                toBeVisitedNode.push(tmp.right);
+            }
+        }
+        return visitedList;
+    }
+
+    /**
+     * 非递归后序遍历
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> postOrderNonCur(Node root) {
+        List<Integer> resList = new ArrayList<>();
+        if (root == null) {
+            return resList;
+        }
+        Map<Node, Integer> visitedMap = new HashMap<>();
+        Stack<Node> toBeVisitedStack = new Stack<>();
+        toBeVisitedStack.push(root);
+        while (!toBeVisitedStack.isEmpty()) {
+            Node tmp = toBeVisitedStack.peek();
+            if (tmp.left == null && tmp.right == null) {
+                resList.add(tmp.val);
+                visitedMap.put(tmp, 1);
+                toBeVisitedStack.pop();
+                continue;
+            } else if (!((tmp.left != null && visitedMap.get(tmp.left) == null) || (tmp.right != null && visitedMap.get(tmp.right) == null))) {
+                //如果节点的左右孩子均已被访问            
+                resList.add(tmp.val);
+                toBeVisitedStack.pop();
+                visitedMap.put(tmp, 1);
+                continue;
+            }
+            if (tmp.left != null) {
+                while (tmp.left != null && visitedMap.get(tmp.left) == null) {//左孩子没有被访问
+                    toBeVisitedStack.push(tmp.left);
+                    tmp = tmp.left;
+                }
+            }
+            if (tmp.right != null) {
+                if (visitedMap.get(tmp.right) == null) {//右孩子没有被访问
+                    toBeVisitedStack.push(tmp.right);
+                }
+            }
+        }
+        return resList;
+    }
+
+    /**
      * 节点数
      *
      * @param node
@@ -224,9 +326,11 @@ public class TreeDemo {
         for (int i = 0; i < arr.length; i++) {
             tree.root = tree.insertIntoBST(tree.root, arr[i]);
         }
-        tree.list();
+        tree.intervalOrder(tree.root).stream().forEach(System.out::println);
+//        tree.list();
+//        tree.preOrderTraversal(tree.root).stream().forEach(System.out::println);
         System.out.println("=================");
-//        System.out.println(tree.delete(12));
+        System.out.println(tree.delete(12));
 //        tree.list();
         System.out.println(tree.getHeight());
         //高度打印出来是7, 但是实际画出来是6  todo
