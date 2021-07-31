@@ -1,9 +1,7 @@
 package com.category.tree;
 
-import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * @Author qiwenbo
@@ -28,6 +26,37 @@ public class InOrderTraversal {
         res.add(root.val);
         inOrder(root.right, res);
 
+    }
+
+    //0730
+    // 中序
+    public void inOrder_01(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        inOrder_01(root.left, res);
+        res.add(root.val);
+        inOrder_01(root.right, res);
+    }
+
+    // 前序
+    public void inOrder_02(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        res.add(root.val);
+        inOrder_02(root.left, res);
+        inOrder_02(root.right, res);
+    }
+
+    //后序
+    public void inOrder_03(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        inOrder_03(root.left, res);
+        inOrder_03(root.right, res);
+        res.add(root.val);
     }
 
     class TreeNode {

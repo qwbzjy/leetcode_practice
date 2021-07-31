@@ -81,6 +81,7 @@ public class TreeDemo {
                 } else {
                     cur = cur.right;
                 }
+                //遍历完全部节点都没找到，则直接返回
                 if (cur == null) {
                     return null;
                 }
@@ -91,6 +92,7 @@ public class TreeDemo {
 
     /**
      * 删除节点
+     * 1、cur 没有子节点  2、cur 有一个孩子节点  3、cur 有两个孩子节点
      */
     public boolean delete(int val) {
         Node cur = root;
@@ -139,6 +141,7 @@ public class TreeDemo {
                 parent.right = cur.right;
             }
         } else {
+            //cur 表示要删除的节点 12
             Node successor = getSuccessor(cur);
             if (cur == root) {
                 root = successor;
@@ -152,8 +155,11 @@ public class TreeDemo {
         return true;
     }
 
+    //如何找到继承者是核心问题？？  debug  结合手绘图
+    //找到删除节点的继任者，将继任者填充到删除节点的位置,
     private Node getSuccessor(Node delNode) {
         Node successor = delNode;
+        //哨兵节点
         Node successorParent = delNode;
         Node cur = delNode.right;
         while (cur != null) {
@@ -164,6 +170,39 @@ public class TreeDemo {
         if (successor != delNode.right) {
             successorParent.left = successor.right;
             successor.right = delNode.right;
+        }
+        return successor;
+    }
+
+    private Node getTargetSuccessor(Node target) {
+        Node successor = target;
+        Node sParent = target;
+        Node cur = target.right;
+        while (cur != null) {
+            sParent = successor;
+            successor = cur;
+            cur = cur.left;
+        }
+        if (successor != target.right) {
+            sParent.left = successor.right;
+            successor.right = target.right;
+        }
+        return successor;
+    }
+
+    //找到最左叶子节点(待删除节点的子树中的最小节点)
+    private Node getSNode(Node target) {
+        Node successor = target;
+        Node sParent = target;
+        Node cur = target.right;
+        while (cur != null) {
+            sParent = successor;
+            successor = cur;
+            cur = cur.left;
+        }
+        if (successor != target.right) {
+            sParent.left = successor.right;
+            successor.right = target.right;
         }
         return successor;
     }
@@ -326,13 +365,13 @@ public class TreeDemo {
         for (int i = 0; i < arr.length; i++) {
             tree.root = tree.insertIntoBST(tree.root, arr[i]);
         }
-        tree.intervalOrder(tree.root).stream().forEach(System.out::println);
+//        tree.intervalOrder(tree.root).stream().forEach(System.out::println);
 //        tree.list();
 //        tree.preOrderTraversal(tree.root).stream().forEach(System.out::println);
         System.out.println("=================");
         System.out.println(tree.delete(12));
-//        tree.list();
-        System.out.println(tree.getHeight());
+        tree.list();
+//        System.out.println(tree.getHeight());
         //高度打印出来是7, 但是实际画出来是6  todo
     }
 }
